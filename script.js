@@ -71,7 +71,7 @@ function previewFile(file) {
 }
 
 function initializeProgress(numfiles) {
-    progressBar.value = 0;
+    progressBar.value = 0.0;
     filesDone = 0;
     filesToDo = numfiles;
 }
