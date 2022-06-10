@@ -4,7 +4,9 @@ const text = document.querySelector(".text");
 const progress = document.querySelector(".progress");
 
 let files = [];
-
+if (input) {
+    input.addEventListener('change', swapper, false);
+}
 input.addEventListener("change", (e) => {
     drop.style.display = "none";
     files = e.target.files;
