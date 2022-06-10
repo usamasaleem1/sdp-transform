@@ -1,85 +1,121 @@
-body {
-    background: #f0d4ff;
-    display: grid;
-    place-items: center;
-    font-family: "Poppins", Arial, Helvetica, sans-serif;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.drop-container {
-    background: #fff;
-    padding: 1.5rem;
-    width: 450px;
-    display: inline-block;
-    border-radius: 20px;
-    box-shadow: 0 0 40px 15px rgba(0, 0, 0, 0.2);
-}
-
-.drop {
-    border-radius: 10px;
-    border: 3px dashed #aaa;
-    display: grid;
-    width: 100%;
-    place-content: center;
-    padding: 2rem;
-    box-sizing: border-box;
-    display: grid;
-    place-items: center;
-}
-
-.active {
-    border: 3px solid #4b4b4b;
-    background: #edccff;
-}
-
-.drop .icon {
-    font-size: 60px;
-    color: #a916f9;
-}
-
-.drop .text {
+.picture-container {
+    position: relative;
+    cursor: pointer;
     text-align: center;
-    font-weight: 500;
-    color: #443f46;
-    margin-top: 1rem;
+    margin-bottom: 15px;
 }
 
-.progress {
-    background: #a916f9;
-    width: 0%;
-    height: 20px;
-    display: none;
-    border-radius: 10px;
+.picture {
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    color: #FFFFFF;
+    margin: 5px auto;
+    overflow: hidden;
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
     transition: all 0.2s;
 }
 
-.drop label {
-    background: #a916f9;
-    padding: 0.7rem 1.8rem;
-    border-radius: 5px;
-    color: #fff;
+.picture>.icon {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    color: #37474F;
+    border: 4px solid #CCCCCC;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -o-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
+.picture:hover .icon {
+    border-color: greenyellow;
+}
+
+.picture>.icon>svg {
+    height: 1.4em;
+    font-size: 4em;
+}
+
+.picture>svg {
+    width: 100%;
+    height: 100%;
+}
+
+.picture input[type="file"] {
+    cursor: pointer;
+    display: block;
+    height: 100%;
+    left: 0;
+    opacity: 0 !important;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    right: 0;
+    bottom: 0;
+}
+
+
+/*svg tick animation*/
+
+.circ {
+    opacity: 0;
+    display: none;
+    stroke-dasharray: 130;
+    stroke-dashoffset: 130;
+    -webkit-transition: all .75s;
+    -moz-transition: all .75s;
+    -ms-transition: all .75s;
+    -o-transition: all .75s;
+    transition: all .75s;
+}
+
+.tick {
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    -webkit-transition: stroke-dashoffset .4s 0.5s ease-out;
+    -moz-transition: stroke-dashoffset .4s 0.5s ease-out;
+    -ms-transition: stroke-dashoffset .4s 0.5s ease-out;
+    -o-transition: stroke-dashoffset .4s 0.5s ease-out;
+    transition: stroke-dashoffset .4s 0.5s ease-out;
+}
+
+.drawn>svg .path {
+    display: block;
+    opacity: 1;
+    stroke-dashoffset: 0;
+}
+
+.drawn {
+    border-color: #fff;
+}
+
+[data-toggle="popover"] {
     cursor: pointer;
 }
 
-.file-input {
-    display: none;
+span.popover-content-remove {
+    padding-left: 10px;
+    color: red;
+    cursor: pointer;
+    float: right;
 }
 
-.line {
-    width: 80px;
-    height: 1px;
-    background: #949494;
+.pb10 {
+    padding-bottom: 10px;
 }
 
-.or-con {
-    display: flex;
-    align-items: center;
-    margin: 0.5rem;
+.popover-header {
+    text-align: center;
 }
 
-.or {
-    margin: 0 1rem;
-    font-weight: 500;
-    color: #443f46;
+.popover {
+    min-width: 200px;
 }

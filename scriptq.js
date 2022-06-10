@@ -1,48 +1,99 @@
-const drop = document.querySelector(".drop");
-const input = document.querySelector(".drop input");
-const text = document.querySelector(".text");
-const progress = document.querySelector(".progress");
+//Global object to store the files
+let fileStorage = {};
 
-let files = [];
-if (input) {
-    input.addEventListener('change', swapper, false);
-}
-input.addEventListener("change", (e) => {
-    drop.style.display = "none";
-    files = e.target.files;
-    upload();
-});
+$(document).ready(function() {
+    //Handle the file change
+    $("input[type='file']").change(function(e) {
+        //Get the id
+        let id = e.target.id;
 
-drop.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    text.innerHTML = "Release your mouse to drop.";
-    drop.classList.add("active");
-});
+        //Get the files
+        let files = e.target.files;
 
-drop.addEventListener("dragleave", (e) => {
-    e.preventDefault();
-    text.innerHTML = "Drag and drop your documents, photos, and video here.";
-    drop.classList.remove("active");
-});
+        //Store the file
+        storeFile(id, files);
 
-drop.addEventListener("drop", (e) => {
-    e.preventDefault();
-    files = e.dataTransfer.files;
-    drop.style.display = "none";
-    upload();
-});
+        //Show the complete icon
+        $(this).siblings('.icon').hide();
+        $(this).parent().removeClass('drawn');
+        setTimeout(() => {
+            $(this).parent().addClass('drawn');
+        }, 50);
+    });
 
-// Upload Logic
-function upload() {
-    // fake Upload Logic
-    let intervalCount = 0.25;
-    progress.style.display = "block";
-    progress.style.width = `${20 * intervalCount}%`;
-    const interval = setInterval(() => {
-        intervalCount += 0.25;
-        progress.style.width = `${20 * intervalCount}%`;
-        if (intervalCount == 5) {
-            clearInterval(interval);
+    //Store the file for particular filepicker
+    let storeFile = (id, files) => {
+        fileStorage[id] = files;
+
+        //Update the file count
+        $(`[data-id="${id}"] > .file-total-viewer`).text(files.length);
+    }
+
+    //Show file list
+    $('[data-toggle="popover"]').popover({
+        html: true,
+        title: "Files",
+        placement: "bottom",
+        content: function() {
+            //Get the id of the file picker
+            let id = $(this).attr('data-id');
+
+            //Get all the files of this filepicker
+            let items = fileStorage[id];
+
+            //Preview the file 
+            let template = '<div class="row">';
+            if (items && items.length) {
+                for (let val of items) {
+                    template += "<div class='col-12 pb10'><span class='popover-content-file-name'>" + val.name + "</span><span class='popover-content-remove' data-target='" + id + "' data-name='" + val.name + "' data-type='upload'><i class='fas fa-trash'></i></span></div>"
+                }
+            } else {
+                template += "<div class='col-12 pb10'><span class='popover-content'>No file</span></div>";
+            }
+
+            template += '</div>';
+            return template;
         }
-    }, 100);
-}
+    });
+
+    //Prevent multiple popover
+    $('body').on('click', function(e) {
+        $('[data-toggle="popover"],[data-original-title]').each(function() {
+            //the 'is' for buttons that trigger popups
+            //the 'has' for icons within a button that triggers a popup
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                (($(this).popover('hide').data('bs.popover') || {}).inState || {}).click = false; // fix for BS 3.3.6
+            }
+        });
+    });
+
+    //Delete files
+    $(document).on('click', '.popover-content-remove', function(e) {
+        //Get the id whose file to delete
+        let id = $(this).attr('data-target');
+
+        //Get the name of the file to delete
+        let name = $(this).attr('data-name');
+
+        //Confirm delete
+        let isDelete = confirm("Do you really want to delete this file?");
+
+        //If confirmed
+        if (isDelete) {
+            //Remove the requested file
+            let files = Object.values(fileStorage[id]);
+            let newArr = files.filter((e) => { return e.name !== name; });
+
+            //Update the list
+            storeFile(id, newArr);
+
+            //If there is no file then show No file
+            if (newArr.length === 0) {
+                $(this).parent().parent().append("<div class='col-12 pb10'><span class='popover-content'>No file</span></div>");
+            }
+
+            //Remove the current file
+            $(this).parent().remove();
+        }
+    });
+});
