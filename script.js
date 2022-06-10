@@ -1,51 +1,46 @@
-const uploadInput = document.querySelector("input[type=file]");
-const dropContainer = document.getElementById("drag-upload");
-const fileListDisplay = document.getElementById("fileList");
+const drop = document.querySelector(".drop");
+const input = document.querySelector(".drop input");
+const text = document.querySelector(".text");
+const progress = document.querySelector(".progress");
 
-let fileList = undefined;
+let files = [];
 
-function handleFiles(files) {
-    fileList = Array.from(files);
-    fillList(files);
-}
+input.addEventListener("change", (e) => {
+    drop.style.display = "none";
+    files = e.target.files;
+    upload();
+});
 
-function dropHandler(evt) {
-    evt.preventDefault();
-    uploadInput.value = '';
-    handleFiles(evt.dataTransfer.files);
-};
+drop.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    text.innerHTML = "Release your mouse to drop.";
+    drop.classList.add("active");
+});
 
-function dragOverHandler(evt) {
-    evt.preventDefault();
-}
+drop.addEventListener("dragleave", (e) => {
+    e.preventDefault();
+    text.innerHTML = "Drag and drop your documents, photos, and video here.";
+    drop.classList.remove("active");
+});
 
-function deleteElement(index) {
-    fileList.splice(index, 1);
-    fillList(fileList);
-}
+drop.addEventListener("drop", (e) => {
+    e.preventDefault();
+    files = e.dataTransfer.files;
+    drop.style.display = "none";
+    upload();
+});
 
-function fillList(files) {
-    fileListDisplay.innerHTML = '';
-
-    var nBytes = 0,
-        nFiles = files.length;
-    for (var nFileId = 0; nFileId < nFiles; nFileId++) {
-        nBytes += files[nFileId].size;
-    }
-    console.log(nBytes);
-    var sOutput = nBytes + " octets";
-    // partie de code facultative pour l'approximation des multiples
-    for (var aMultiples = ["Ko", "Mo", "Go"], nMultiple = 0, nApprox = nBytes / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
-        sOutput = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + nBytes + " octets)";
-        console.log(sOutput);
-    }
-    document.getElementById("fileWeight").innerText = sOutput;
-
-    for (let i = 0; i < files.length; i++) {
-        fileListDisplay.innerHTML += `<div class="file-line">
-      <span class="material-icons file-icon">upload_file</span>
-      <span>${files[i].name}</span>
-      <span class="material-icons close-icon" onclick="deleteElement(${i})">close</span>
-    </div>`;
-    }
+// Upload Logic
+function upload() {
+    // fake Upload Logic
+    let intervalCount = 0.25;
+    progress.style.display = "block";
+    progress.style.width = `${20 * intervalCount}%`;
+    const interval = setInterval(() => {
+        intervalCount += 0.25;
+        progress.style.width = `${20 * intervalCount}%`;
+        if (intervalCount == 5) {
+            clearInterval(interval);
+        }
+    }, 100);
 }
