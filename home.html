@@ -48,7 +48,7 @@
             event.preventDefault();
             console.log("drop");
             if (event.target.className === "inner") {
-                const files = changeEvent(event);
+                const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
                 event.target.style.background = "#3a3a3a";
                 handleUpdate([...files]);
             }
@@ -69,7 +69,7 @@
                 reader.addEventListener("load", (event) => {
                     const img = el("img", {
                         className: "embed-img",
-                        src: event.target.result
+                        src: event.target ? event.target.result : ""
                     });
                     const imgContainer = el("div", {
                         className: "container-img"
@@ -120,7 +120,7 @@
 
     <main class="container">
         <label class="label" id="label" for="input">
-    <div class="inner" id="inner">yerrrrr</div>
+    <div class="inner" id="inner">etetete</div>
   </label>
         <input id="input" class="input" accept="image/*" type="file" required="true" multiple="true" hidden="true">
         <p class="preview-title">preview</p>
