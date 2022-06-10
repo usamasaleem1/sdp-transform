@@ -1,48 +1,97 @@
-#drop-area {
-    border: 2px dashed #ccc;
-    border-radius: 20px;
-    width: 480px;
-    font-family: sans-serif;
-    margin: 100px auto;
-    padding: 20px;
+body {
+    background-color: #f0f0f0;
 }
 
-#drop-area.highlight {
-    border-color: purple;
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    width: 400px;
+    margin: 0 auto;
 }
 
-p {
-    margin-top: 0;
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 5px;
 }
 
-.my-form {
-    margin-bottom: 10px;
+.sub-title {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.3);
 }
 
-#gallery {
-    margin-top: 10px;
-}
-
-#gallery img {
-    width: 150px;
-    margin-bottom: 10px;
-    margin-right: 10px;
-    vertical-align: middle;
-}
-
-.button {
-    display: inline-block;
-    padding: 10px;
-    background: #ccc;
+.upload {
+    margin: 20px;
+    border: dotted 2px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    height: 350px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     cursor: pointer;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    color: #147aff;
 }
 
-.button:hover {
-    background: #ddd;
+.upload .upload-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
 }
 
-#fileElem {
-    display: none;
+.upload .upload-info {
+    font-weight: 600;
+}
+
+.upload:hover .upload-info {
+    text-decoration: underline;
+}
+
+.files-info {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 5px;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.files-info #fileWeight {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.file-list {
+    width: 100%;
+}
+
+.file-list .file-line {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 40px auto 20px;
+}
+
+.file-list .file-line span {
+    display: flex;
+    align-items: center;
+}
+
+.file-list .file-line .file-icon {
+    font-size: 2.5em;
+    color: #147aff;
+}
+
+.file-list .file-line .close-icon {
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.file-list .file-line .close-icon:hover {
+    color: darkred;
 }
