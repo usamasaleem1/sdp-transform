@@ -1,5 +1,5 @@
 var parser = require('./parser');
-var writer = require('./writer');
+var writer = require('./lib/writer');
 
 exports.write = writer;
 exports.parse = parser.parse;
