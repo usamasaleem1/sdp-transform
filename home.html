@@ -5,127 +5,104 @@
     <link rel="stylesheet" href="style.css">
 
     <script>
-        var input = document.getElementById("input");
-        var initLabel = document.getElementById("label");
+        let dropArea = document.getElementById("drop-area");
+        let filesDone = 0;
+        let filesToDo = 0;
+        let progressBar = document.getElementById("progress-bar");
 
-        input.addEventListener("change", (event) => {
-            const files = changeEvent(event);
-            handleUpdate(files);
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
         });
 
-        initLabel.addEventListener("mouseover", (event) => {
-            event.preventDefault();
-            const label = document.getElementById("label");
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ["dragenter", "dragover"].forEach((eventName) => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        ["dragleave", "drop"].forEach((eventName) => {
+            dropArea.addEventListener(eventName, unhighlight, false);
         });
 
-        initLabel.addEventListener("mouseout", (event) => {
-            event.preventDefault();
-            const label = document.getElementById("label");
-        });
+        function highlight(e) {
+            dropArea.classList.add("highlight");
+        }
 
-        document.addEventListener("dragenter", (event) => {
-            event.preventDefault();
-            console.log("dragenter");
-            if (event.target.className === "inner") {
-                event.target.style.background = "#616161";
-            }
-        });
+        function unhighlight(e) {
+            dropArea.classList.remove("highlight");
+        }
+        dropArea.addEventListener("drop", handleDrop, false);
 
-        document.addEventListener("dragover", (event) => {
-            console.log("dragover");
-            event.preventDefault();
-        });
+        function handleDrop(e) {
+            let dt = e.dataTransfer;
+            let files = dt.files;
 
-        document.addEventListener("dragleave", (event) => {
-            event.preventDefault();
-            console.log("dragleave");
-            if (event.target.className === "inner") {
-                event.target.style.background = "#3a3a3a";
-            }
-        });
+            handleFiles(files);
+        }
+        // function handleFiles(files) {
+        //   [...files].forEach(uploadFile);
+        // }
+        function handleFiles(files) {
+            files = [...files];
+            initializeProgress(files.length); // <- Add this line
+            files.forEach(uploadFile);
+            files.forEach(previewFile);
+        }
 
-        document.addEventListener("drop", (event) => {
-            event.preventDefault();
-            console.log("drop");
-            if (event.target.className === "inner") {
-                const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
-                event.target.style.background = "#3a3a3a";
-                handleUpdate([...files]);
-            }
-        });
+        function uploadFile(file) {
+            let url = "YOUR URL HERE";
+            let formData = new FormData();
 
-        function changeEvent(event) {
-            const {
-                target
-            } = event;
-            return [...target.files];
-        };
+            formData.append("file", file);
 
-        function handleUpdate(fileList) {
-            const preview = document.getElementById("preview");
-
-            fileList.forEach((file) => {
-                const reader = new FileReader();
-                reader.addEventListener("load", (event) => {
-                    const img = el("img", {
-                        className: "embed-img",
-                        src: event.target ? event.target.result : ""
-                    });
-                    const imgContainer = el("div", {
-                        className: "container-img"
-                    }, img);
-                    preview.append(imgContainer);
+            fetch(url, {
+                    method: "POST",
+                    body: formData
+                })
+                .then(progressDone) // <- Add `progressDone` call here
+                .catch(() => {
+                    /* Error. Inform the user */
                 });
-                reader.readAsDataURL(file);
-            });
-        };
+        }
 
-        function el(nodeName, attributes, ...children) {
-            const node =
-                nodeName === "fragment" ?
-                document.createDocumentFragment() :
-                document.createElement(nodeName);
+        function previewFile(file) {
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = function() {
+                let img = document.createElement("img");
+                img.src = reader.result;
+                document.getElementById("gallery").appendChild(img);
+            };
+        }
 
-            Object.entries(attributes).forEach(([key, value]) => {
-                if (key === "events") {
-                    Object.entries(value).forEach(([type, listener]) => {
-                        node.addEventListener(type, listener);
-                    });
-                } else if (key in node) {
-                    try {
-                        node[key] = value;
-                    } catch (err) {
-                        node.setAttribute(key, value);
-                    }
-                } else {
-                    node.setAttribute(key, value);
-                }
-            });
+        function initializeProgress(numfiles) {
+            progressBar.value = 0;
+            filesDone = 0;
+            filesToDo = numfiles;
+        }
 
-            children.forEach((childNode) => {
-                if (typeof childNode === "string") {
-                    node.appendChild(document.createTextNode(childNode));
-                } else {
-                    node.appendChild(childNode);
-                }
-            });
-
-            return node;
+        function progressDone() {
+            filesDone++;
+            progressBar.value = (filesDone / filesToDo) * 100;
         }
     </script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <div id="drop-area">
+        <form class="my-form">
+            <p>Upload multiple files with the file dialog or by dragging and dropping images onto the dashed region</p>
+            <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+            <label class="button" for="fileElem">Select some files</label>
+        </form>
+        <progress id="progress-bar" max=100 value=0></progress>
 
-    <main class="container">
-        <label class="label" id="label" for="input">
-    <div class="inner" id="inner">etetete</div>
-  </label>
-        <input id="input" class="input" accept="image/*" type="file" required="true" multiple="true" hidden="true">
-        <p class="preview-title">preview</p>
-        <div class="preview" id="preview"></div>
-    </main>
+        <div id="gallery"></div>
+
+    </div>
 </body>
 
 </html>
