@@ -16,7 +16,6 @@
         initLabel.addEventListener("mouseover", (event) => {
             event.preventDefault();
             const label = document.getElementById("label");
-
         });
 
         initLabel.addEventListener("mouseout", (event) => {
@@ -49,6 +48,7 @@
             event.preventDefault();
             console.log("drop");
             if (event.target.className === "inner") {
+                const files = changeEvent(event);
                 event.target.style.background = "#3a3a3a";
                 handleUpdate([...files]);
             }
@@ -69,6 +69,7 @@
                 reader.addEventListener("load", (event) => {
                     const img = el("img", {
                         className: "embed-img",
+                        src: event.target.result
                     });
                     const imgContainer = el("div", {
                         className: "container-img"
@@ -112,7 +113,7 @@
             return node;
         }
     </script>
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
