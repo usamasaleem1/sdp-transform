@@ -16,11 +16,10 @@
   "bin": {
     "sdp-verify": "./checker.js"
   },
-  "scripts": {
-    "lint": "eslint .",
-    "test": "bndg test/*.test.js",
-    "precoverage": "istanbul cover bndg test/*.test.js",
-    "coverage": "cat coverage/lcov.info && rm -rf coverage"
+ "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index",
+    "start": "node index"
   },
   "dependencies": {},
   "devDependencies": {
