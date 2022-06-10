@@ -1,82 +1,51 @@
-let dropArea = document.getElementById("drop-area");
-let filesDone = 0;
-let filesToDo = 0;
-let progressBar = document.getElementById("progress-bar");
+const uploadInput = document.querySelector("input[type=file]");
+const dropContainer = document.getElementById("drag-upload");
+const fileListDisplay = document.getElementById("fileList");
 
-["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-    dropArea.addEventListener(eventName, preventDefaults, false);
-});
+let fileList = undefined;
 
-function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-}
-
-["dragenter", "dragover"].forEach((eventName) => {
-    dropArea.addEventListener(eventName, highlight, false);
-});
-["dragleave", "drop"].forEach((eventName) => {
-    dropArea.addEventListener(eventName, unhighlight, false);
-});
-
-function highlight(e) {
-    dropArea.classList.add("highlight");
-}
-
-function unhighlight(e) {
-    dropArea.classList.remove("highlight");
-}
-dropArea.addEventListener("drop", handleDrop, false);
-
-function handleDrop(e) {
-    let dt = e.dataTransfer;
-    let files = dt.files;
-
-    handleFiles(files);
-}
-// function handleFiles(files) {
-//   [...files].forEach(uploadFile);
-// }
 function handleFiles(files) {
-    files = [...files];
-    initializeProgress(files.length); // <- Add this line
-    files.forEach(uploadFile);
-    files.forEach(previewFile);
+    fileList = Array.from(files);
+    fillList(files);
 }
 
-function uploadFile(file) {
-    let url = "YOUR URL HERE";
-    let formData = new FormData();
+function dropHandler(evt) {
+    evt.preventDefault();
+    uploadInput.value = '';
+    handleFiles(evt.dataTransfer.files);
+};
 
-    formData.append("file", file);
-
-    fetch(url, {
-            method: "POST",
-            body: formData
-        })
-        .then(progressDone) // <- Add `progressDone` call here
-        .catch(() => {
-            /* Error. Inform the user */
-        });
+function dragOverHandler(evt) {
+    evt.preventDefault();
 }
 
-function previewFile(file) {
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = function() {
-        let img = document.createElement("img");
-        img.src = reader.result;
-        document.getElementById("gallery").appendChild(img);
-    };
+function deleteElement(index) {
+    fileList.splice(index, 1);
+    fillList(fileList);
 }
 
-function initializeProgress(numfiles) {
-    progressBar.value = 0;
-    filesDone = 0;
-    filesToDo = numfiles;
-}
+function fillList(files) {
+    fileListDisplay.innerHTML = '';
 
-function progressDone() {
-    filesDone++;
-    progressBar.value = (filesDone / filesToDo) * 100;
+    var nBytes = 0,
+        nFiles = files.length;
+    for (var nFileId = 0; nFileId < nFiles; nFileId++) {
+        nBytes += files[nFileId].size;
+    }
+    console.log(nBytes);
+    var sOutput = nBytes + " octets";
+    // partie de code facultative pour l'approximation des multiples
+    for (var aMultiples = ["Ko", "Mo", "Go"], nMultiple = 0, nApprox = nBytes / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
+        sOutput = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + nBytes + " octets)";
+        console.log(sOutput);
+    }
+    document.getElementById("fileWeight").innerText = sOutput;
+
+    for (let i = 0; i < files.length; i++) {
+        fileListDisplay.innerHTML += `<div class="file-line">
+      <span class="material-icons file-icon">upload_file</span>
+      <span>${files[i].name}</span>
+      <span class="material-icons close-icon" onclick="deleteElement(${i})">close</span>
+    </div>`;
+    }
 }
