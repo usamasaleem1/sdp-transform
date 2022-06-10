@@ -2,29 +2,129 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="style.css">
+
     <script>
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
+        var input = document.getElementById("input");
+        var initLabel = document.getElementById("label");
 
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-        }
+        input.addEventListener("change", (event) => {
+            const files = changeEvent(event);
+            handleUpdate(files);
+        });
 
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            ev.target.appendChild(document.getElementById(data));
+        initLabel.addEventListener("mouseover", (event) => {
+            event.preventDefault();
+            const label = document.getElementById("label");
+
+        });
+
+        initLabel.addEventListener("mouseout", (event) => {
+            event.preventDefault();
+            const label = document.getElementById("label");
+        });
+
+        document.addEventListener("dragenter", (event) => {
+            event.preventDefault();
+            console.log("dragenter");
+            if (event.target.className === "inner") {
+                event.target.style.background = "#616161";
+            }
+        });
+
+        document.addEventListener("dragover", (event) => {
+            console.log("dragover");
+            event.preventDefault();
+        });
+
+        document.addEventListener("dragleave", (event) => {
+            event.preventDefault();
+            console.log("dragleave");
+            if (event.target.className === "inner") {
+                event.target.style.background = "#3a3a3a";
+            }
+        });
+
+        document.addEventListener("drop", (event) => {
+            event.preventDefault();
+            console.log("drop");
+            if (event.target.className === "inner") {
+                event.target.style.background = "#3a3a3a";
+                handleUpdate([...files]);
+            }
+        });
+
+        function changeEvent(event) {
+            const {
+                target
+            } = event;
+            return [...target.files];
+        };
+
+        function handleUpdate(fileList) {
+            const preview = document.getElementById("preview");
+
+            fileList.forEach((file) => {
+                const reader = new FileReader();
+                reader.addEventListener("load", (event) => {
+                    const img = el("img", {
+                        className: "embed-img",
+                    });
+                    const imgContainer = el("div", {
+                        className: "container-img"
+                    }, img);
+                    preview.append(imgContainer);
+                });
+                reader.readAsDataURL(file);
+            });
+        };
+
+        function el(nodeName, attributes, ...children) {
+            const node =
+                nodeName === "fragment" ?
+                document.createDocumentFragment() :
+                document.createElement(nodeName);
+
+            Object.entries(attributes).forEach(([key, value]) => {
+                if (key === "events") {
+                    Object.entries(value).forEach(([type, listener]) => {
+                        node.addEventListener(type, listener);
+                    });
+                } else if (key in node) {
+                    try {
+                        node[key] = value;
+                    } catch (err) {
+                        node.setAttribute(key, value);
+                    }
+                } else {
+                    node.setAttribute(key, value);
+                }
+            });
+
+            children.forEach((childNode) => {
+                if (typeof childNode === "string") {
+                    node.appendChild(document.createTextNode(childNode));
+                } else {
+                    node.appendChild(childNode);
+                }
+            });
+
+            return node;
         }
     </script>
+
 </head>
 
 <body>
 
-    <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-
-    <img id="drag1" src="img_logo.gif" draggable="true" ondragstart="drag(event)" width="336" height="69">
-
+    <main class="container">
+        <label class="label" id="label" for="input">
+    <div class="inner" id="inner">드래그하거나 클릭해서 업로드</div>
+  </label>
+        <input id="input" class="input" accept="image/*" type="file" required="true" multiple="true" hidden="true">
+        <p class="preview-title">preview</p>
+        <div class="preview" id="preview"></div>
+    </main>
 </body>
 
 </html>
